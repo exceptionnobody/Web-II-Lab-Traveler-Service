@@ -1,9 +1,12 @@
 package it.polito.wa2.g12.travelerservice.repositories
 
+import it.polito.wa2.g12.travelerservice.dto.UserDetailsDto
 import it.polito.wa2.g12.travelerservice.entities.UserDetails
+import org.springframework.data.jpa.repository.Modifying
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
+import org.springframework.data.repository.query.Param
+import java.math.BigInteger
+import java.util.Date
 
-interface UserDetailsRepository : CrudRepository<UserDetails, Long> {
-    fun existsByName(name: String): Boolean
-    fun existsByPhoneNumber(phoneNumber: Int): Boolean
-}
+interface UserDetailsRepository : CrudRepository<UserDetails, Long>
