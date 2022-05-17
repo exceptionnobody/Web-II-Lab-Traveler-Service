@@ -21,7 +21,7 @@ class Controller(val travelerService: TravelerServImpl) {
         //JWT role check (fun getDetailsJwt)
         val name = "pietro"             //this field should be returned by the getDetailsJwt fun
         //if (!validateJwt()) return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        val res : UserDetailsDto? = travelerService.getUserDet(name)
+        val res : UserDetailsDto = travelerService.getUserDet(name)
         return ResponseEntity(res, HttpStatus.OK)
     }
 
