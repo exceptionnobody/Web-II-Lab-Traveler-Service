@@ -1,7 +1,6 @@
 package it.polito.wa2.g12.travelerservice.entities
 
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
-import it.polito.wa2.g12.travelerservice.dto.UserDetailsDto
 import java.time.LocalDateTime
 import java.util.Date
 import javax.persistence.*
