@@ -10,14 +10,15 @@ import javax.persistence.*
 class TicketPurchased(
     @Column(nullable = false)
     var zone: String,
-    @Column (nullable = false)
-    @Temporal(value = TemporalType.TIMESTAMP)
-    var issuedAt: Date = java.sql.Timestamp.valueOf(LocalDateTime.now()),
-    @Column(nullable = false)
-    @Temporal(value = TemporalType.TIMESTAMP)
-    var deadline: Date = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1)),
     @ManyToOne
     var userDet: UserDetails
-): EntityBase<Long>()
+): EntityBase<Long>() {
+    @Column (nullable = false)
+    @Temporal(value = TemporalType.TIMESTAMP)
+    var issuedAt: Date = java.sql.Timestamp.valueOf(LocalDateTime.now())
+    @Column(nullable = false)
+    @Temporal(value = TemporalType.TIMESTAMP)
+    var deadline: Date = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1))
+}
 
-fun TicketPurchased.toDTO() = TicketDTO(this.getId()!!, zone, issuedAt, deadline, userDet.getId()!!)
+fun TicketPurchased.toDTO(ticketId: Long?, userId: Long?) = TicketDTO(ticketId, zone, issuedAt.toString(), deadline.toString(), userId)
