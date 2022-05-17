@@ -1,6 +1,6 @@
 package it.polito.wa2.g12.travelerservice.entities
 
-import it.polito.wa2.g12.travelerservice.dto.UserDetailsDto
+import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import java.util.*
 import javax.persistence.*
 
@@ -25,4 +25,4 @@ class UserDetails(
     }
 }
 
-fun UserDetails.toDTO() = UserDetailsDto(name, address, date_of_birth, phoneNumber)
+fun UserDetails.toDTO() = UserInfoDTO(name, address, date_of_birth, phoneNumber)

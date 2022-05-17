@@ -1,7 +1,7 @@
 package it.polito.wa2.g12.travelerservice.service.implementation
 
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
-import it.polito.wa2.g12.travelerservice.dto.UserDetailsDto
+import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import it.polito.wa2.g12.travelerservice.entities.TicketPurchased
 import it.polito.wa2.g12.travelerservice.entities.UserDetails
 import it.polito.wa2.g12.travelerservice.entities.toDTO
@@ -20,15 +20,15 @@ class TravelerServImpl : TravelerService {
     @Autowired
     lateinit var ticketsRepo : TicketPurchasedRepository
 
-    override fun getUserDet(name: String) : UserDetailsDto {
+    override fun getUserDet(name: String) : UserInfoDTO {
         return userDetRepo.findByName(name).get().toDTO()
     }
 
-    override fun getUserDetById(userId: Long): UserDetailsDto {
+    override fun getUserDetById(userId: Long): UserInfoDTO {
         return userDetRepo.findById(userId).get().toDTO()
     }
 
-    override fun updateUserDet(name: String, info: UserDetailsDto) {
+    override fun updateUserDet(name: String, info: UserInfoDTO) {
         val userInfo: UserDetails = userDetRepo.findByName(name).get()
         userInfo.name = info.name
         userInfo.address = info.address

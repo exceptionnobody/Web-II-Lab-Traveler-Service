@@ -2,7 +2,7 @@ package it.polito.wa2.g12.travelerservice.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
-import it.polito.wa2.g12.travelerservice.dto.UserDetailsDto
+import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import it.polito.wa2.g12.travelerservice.service.implementation.TravelerServImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,7 +23,7 @@ class Controller(val travelerService: TravelerServImpl) {
         //JWT role check (fun getDetailsJwt)
         val name = "pietro"             //this field should be returned by the getDetailsJwt fun
         //if (!validateJwt()) return ResponseEntity(HttpStatus.UNAUTHORIZED)
-        val res : UserDetailsDto = travelerService.getUserDet(name)
+        val res : UserInfoDTO = travelerService.getUserDet(name)
         return ResponseEntity(res, HttpStatus.OK)
     }
 
@@ -41,7 +41,7 @@ class Controller(val travelerService: TravelerServImpl) {
         //if (!validateJwt()) return ResponseEntity(HttpStatus.UNAUTHORIZED)
         if (br.hasErrors()) return ResponseEntity(HttpStatus.BAD_REQUEST)
         val ob = jacksonObjectMapper()
-        val newInfo: UserDetailsDto = ob.readValue(body, UserDetailsDto::class.java)
+        val newInfo: UserInfoDTO = ob.readValue(body, UserInfoDTO::class.java)
         travelerService.updateUserDet(name, newInfo)
         return ResponseEntity("User Updated", HttpStatus.OK)
     }
