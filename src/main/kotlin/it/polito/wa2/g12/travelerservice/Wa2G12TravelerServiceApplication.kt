@@ -1,11 +1,16 @@
 package it.polito.wa2.g12.travelerservice
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
+import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration
+import org.springframework.boot.builder.SpringApplicationBuilder
 
-@SpringBootApplication
-class Wa2G12TravelerServiceApplication
+@SpringBootApplication(exclude = [(RepositoryRestMvcAutoConfiguration::class)])
+class Application
 
 fun main(args: Array<String>) {
-    runApplication<Wa2G12TravelerServiceApplication>(*args)
+    configureApplication(SpringApplicationBuilder()).run(*args)
+}
+
+fun configureApplication(builder: SpringApplicationBuilder): SpringApplicationBuilder {
+    return builder.sources(Application::class.java)
 }
