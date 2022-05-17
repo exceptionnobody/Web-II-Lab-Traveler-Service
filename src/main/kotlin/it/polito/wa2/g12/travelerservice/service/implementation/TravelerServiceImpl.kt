@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class TravelerServImpl : TravelerService {
+class TravelerServiceImpl : TravelerService {
 
     @Autowired
     lateinit var userDetRepo : UserDetailsRepository

@@ -3,14 +3,14 @@ package it.polito.wa2.g12.travelerservice.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
-import it.polito.wa2.g12.travelerservice.service.implementation.TravelerServImpl
+import it.polito.wa2.g12.travelerservice.service.implementation.TravelerServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class Controller(val travelerService: TravelerServImpl) {
+class Controller(val travelerService: TravelerServiceImpl) {
 
 
 
