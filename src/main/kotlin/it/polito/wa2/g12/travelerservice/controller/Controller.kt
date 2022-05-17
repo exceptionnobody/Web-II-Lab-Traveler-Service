@@ -9,9 +9,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 
-
 @RestController
 class Controller(val travelerService: TravelerServImpl) {
+
+
+
     @GetMapping("/my/profile")
     fun getUserDet(
         @RequestHeader("Authorization")
