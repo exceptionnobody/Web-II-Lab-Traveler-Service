@@ -13,4 +13,9 @@ import java.util.*
 import javax.persistence.LockModeType
 import javax.persistence.QueryHint
 
-interface UserDetailsRepository : CrudRepository<UserDetails, Long>
+interface UserDetailsRepository : CrudRepository<UserDetails, Long> {
+    fun findByName(name: String): Optional<UserDetails>
+
+    @Query("SELECT DISTINCT u.name FROM UserDetails u")
+    fun findAllTravelers(): List<String>
+}

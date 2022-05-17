@@ -8,8 +8,11 @@ import java.util.*
 import javax.transaction.Transactional
 
 interface TravelerService {
-    fun myProfile(userId: Long): UserDetailsDto
-    fun updateMyProfile(userId: Long, info: UserDetailsDto)
-    fun userTickets(userId: Long): List<TicketDTO>
-    fun postTickets(userId: Long, quantity: Int, zone: String): List<TicketDTO>
+    fun getUserDet(name: String): UserDetailsDto
+    fun getUserDetById(userId: Long): UserDetailsDto
+    fun updateUserDet(name: String, info: UserDetailsDto)
+    fun getUserTickets(name: String): List<TicketDTO>
+    fun getTicketsByUserId(userId: Long): List<TicketDTO>
+    fun createUserTickets(name: String, quantity: Int, zone: String): List<TicketDTO>
+    fun getTravelers(): List<String>
 }

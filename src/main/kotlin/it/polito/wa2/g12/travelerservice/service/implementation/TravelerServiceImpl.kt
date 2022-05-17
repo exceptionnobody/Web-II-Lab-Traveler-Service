@@ -1,6 +1,5 @@
-package it.polito.wa2.g12.travelerservice.service
+package it.polito.wa2.g12.travelerservice.service.implementation
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserDetailsDto
 import it.polito.wa2.g12.travelerservice.entities.TicketPurchased
@@ -8,6 +7,7 @@ import it.polito.wa2.g12.travelerservice.entities.UserDetails
 import it.polito.wa2.g12.travelerservice.entities.toDTO
 import it.polito.wa2.g12.travelerservice.repositories.TicketPurchasedRepository
 import it.polito.wa2.g12.travelerservice.repositories.UserDetailsRepository
+import it.polito.wa2.g12.travelerservice.service.TravelerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -20,14 +20,16 @@ class TravelerServImpl : TravelerService {
     @Autowired
     lateinit var ticketsRepo : TicketPurchasedRepository
 
-    override fun myProfile(userId: Long) : UserDetailsDto {
-        val user = userDetRepo.findById(userId).get()
-        val job = jacksonObjectMapper()
-        return UserDetailsDto(user.name, user.address, user.date_of_birth,user.phoneNumber)
+    override fun getUserDet(name: String) : UserDetailsDto {
+        return userDetRepo.findByName(name).get().toDTO()
     }
 
-    override fun updateMyProfile(userId: Long, info: UserDetailsDto) {
-        val userInfo: UserDetails = userDetRepo.findById(userId).get()
+    override fun getUserDetById(userId: Long): UserDetailsDto {
+        return userDetRepo.findById(userId).get().toDTO()
+    }
+
+    override fun updateUserDet(name: String, info: UserDetailsDto) {
+        val userInfo: UserDetails = userDetRepo.findByName(name).get()
         userInfo.name = info.name
         userInfo.address = info.address
         userInfo.date_of_birth = info.date_of_birth
@@ -35,9 +37,7 @@ class TravelerServImpl : TravelerService {
         userDetRepo.save(userInfo)
     }
 
-
-    override fun userTickets(userId: Long): List<TicketDTO> {
-        val tickets: List<String> = ticketsRepo.findAllByUserDet(userId)
+    private fun getTicketList(tickets: List<String>): MutableList<TicketDTO> {
         val ticketList: MutableList<TicketDTO> = mutableListOf()
         tickets.forEach { t ->
             val parts = t.split(",")
@@ -46,8 +46,20 @@ class TravelerServImpl : TravelerService {
         return ticketList
     }
 
-    override fun postTickets(userId: Long, quantity: Int, zone: String): List<TicketDTO> {
-        val user: UserDetails = userDetRepo.findById(userId).get()
+    override fun getUserTickets(name: String): List<TicketDTO> {
+        val userId = userDetRepo.findByName(name).get().getId()
+        val tickets: List<String> = ticketsRepo.findAllByUserDet(userId!!)
+        return getTicketList(tickets)
+    }
+
+    override fun getTicketsByUserId(userId: Long): List<TicketDTO> {
+        val tickets: List<String> = ticketsRepo.findAllByUserDet(userId)
+        return getTicketList(tickets)
+    }
+
+    override fun createUserTickets(name: String, quantity: Int, zone: String): List<TicketDTO> {
+        val userId = userDetRepo.findByName(name).get().getId()
+        val user: UserDetails = userDetRepo.findById(userId!!).get()
         var x = quantity
         val newTickets: MutableList<TicketDTO> = mutableListOf()
         while (x > 0) {
@@ -59,4 +71,7 @@ class TravelerServImpl : TravelerService {
         return newTickets
     }
 
+    override fun getTravelers(): List<String> {
+        return userDetRepo.findAllTravelers()
+    }
 }
