@@ -32,7 +32,7 @@ class Controller(val travelerService: TravelerServiceImpl) {
         //if (!validateJwt()) return ResponseEntity(HttpStatus.UNAUTHORIZED)
         val res : UserInfoDTO = travelerService.getUserDet(name)
         return ResponseEntity(res, HttpStatus.OK)
-    }*/
+    }
 
     @PutMapping("/my/profile")
     fun updateUserDet(
@@ -86,7 +86,7 @@ class Controller(val travelerService: TravelerServiceImpl) {
         val res = travelerService.createUserTickets(name, req.quantity, req.zones)
         return ResponseEntity(res, HttpStatus.CREATED)
     }
-
+*/
     @GetMapping("/admin/travelers")
     fun getAllUsers(
         @RequestHeader("Authorization")
