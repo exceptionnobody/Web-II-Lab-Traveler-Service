@@ -51,6 +51,9 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
 
     private data class AddingTicketReq(val cmd: String, val quantity: Int, val zones: String)
 
+    // To test this endpoint you can provide a JSON like this one:
+    // {"cmd": "buy_tickets", "quantity": "2", "zones": "ABC"}
+    // All the JSON fields are needed
     @PostMapping("/tickets")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun postTickets(
@@ -66,18 +69,4 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
         val res = travelerService.createUserTickets(principal.name, req.quantity, req.zones)
         return ResponseEntity(res, HttpStatus.CREATED)
     }
-
-    @GetMapping(value = ["", "/", "/test"])
-    fun helloWorld() = "Test!"
-
-    @GetMapping(value = ["/required"])
-    fun helloRequiredWorld(@RequestParam(value = "msg", required = true) msg: String) = "Echo \"$msg\"!"
-
-    @GetMapping(value = ["/customer"])
-    @PreAuthorize("hasAuthority('CUSTOMER')")
-    fun helloRestrictedWorld() = "Hi CUSTOMER!"
-
-    @GetMapping(value = ["/foradmin"])
-    @PreAuthorize("hasAuthority('ADMIN')")
-    fun helloAdminWorld() = "Admin!"
 }
