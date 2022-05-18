@@ -39,7 +39,7 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
         val ob = jacksonObjectMapper()
         val newInfo: UserInfoDTO = ob.readValue(body, UserInfoDTO::class.java)
         travelerService.updateUserDet(principal.name, newInfo)
-        return ResponseEntity("User updated.", HttpStatus.OK)
+        return ResponseEntity("User updated!", HttpStatus.OK)
     }
 
     @GetMapping("/tickets")
