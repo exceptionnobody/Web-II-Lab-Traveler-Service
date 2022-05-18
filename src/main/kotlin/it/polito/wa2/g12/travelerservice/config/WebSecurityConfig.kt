@@ -22,9 +22,10 @@ class WebSecurityConfig(
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // no sessions
             .and()
             .authorizeRequests()
-            .antMatchers("/api/**").permitAll()
-            .antMatchers("/admin/**").hasRole("ADMIN")
-            .antMatchers("/my/**").hasRole("CUSTOMER")
+            //.antMatchers("/api/**").permitAll()
+            .antMatchers("/admin/**").permitAll()
+            .antMatchers("/my/**").permitAll()
+            //.antMatchers("/my/profile").hasRole("ADMIN")
             .anyRequest().authenticated()
             .and()
             .addFilterBefore(authorizationFilterBean(), UsernamePasswordAuthenticationFilter::class.java )

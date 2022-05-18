@@ -6,26 +6,33 @@ import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import it.polito.wa2.g12.travelerservice.service.implementation.TravelerServiceImpl
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContext
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 class Controller(val travelerService: TravelerServiceImpl) {
 
-
-
+/*
     @GetMapping("/my/profile")
+    @PreAuthorize("hasAuthority('ADMIN')")
     fun getUserDet(
-        @RequestHeader("Authorization")
-        header: String
+        /*@RequestHeader("Authorization")
+        header: String,*/
+        principal: Principal
     ) : ResponseEntity<Any> {
         //JWT validation (fun validate Jwt)
         //JWT role check (fun getDetailsJwt)
         val name = "pietro"             //this field should be returned by the getDetailsJwt fun
+
+        println(principal.name);
+
         //if (!validateJwt()) return ResponseEntity(HttpStatus.UNAUTHORIZED)
         val res : UserInfoDTO = travelerService.getUserDet(name)
         return ResponseEntity(res, HttpStatus.OK)
-    }
+    }*/
 
     @PutMapping("/my/profile")
     fun updateUserDet(
