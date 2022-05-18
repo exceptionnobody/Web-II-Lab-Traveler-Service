@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/my")
-class IndexController(val travelerService: TravelerServiceImpl) {
+class CurrentUserController(val travelerService: TravelerServiceImpl) {
 
     @GetMapping(value = ["/profile"])
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
@@ -25,6 +25,7 @@ class IndexController(val travelerService: TravelerServiceImpl) {
     // To test this endpoint you can provide a JSON like this one:
     // {"name":"test", "address":"test", "date_of_birth":"2022-05-18", "number":123456789}
     // All the JSON fields are needed
+    // TODO: Phone number should be a string not an integer
     @PutMapping("/profile")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun updateUserDet(
