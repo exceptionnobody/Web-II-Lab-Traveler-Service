@@ -1,6 +1,5 @@
 package it.polito.wa2.g12.travelerservice.controller
 
-import arrow.core.invalid
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
