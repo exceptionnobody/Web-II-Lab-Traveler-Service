@@ -81,7 +81,7 @@ class IntegrationTests {
     }
 
     @Test
-    fun authenticationTest() {
+    fun authorizationTests() {
         val allRoles = listOf("ADMIN","CUSTOMER")
         val adminRole = listOf("ADMIN")
         val customerRole = listOf("CUSTOMER")
@@ -92,8 +92,8 @@ class IntegrationTests {
             listOf(HttpMethod.GET,"/admin/travelers","",allRoles,false),
             listOf(HttpMethod.GET,"/admin/traveler/1/profile","",allRoles,false),
             listOf(HttpMethod.GET,"/admin/traveler/1/tickets","",allRoles,false),
-            listOf(HttpMethod.GET,"/admin/traveler/1/profile","",adminRole,true),
-            listOf(HttpMethod.GET,"/admin/traveler/1/tickets","",adminRole,true),
+            listOf(HttpMethod.GET,"/admin/traveler/1/profile","",adminRole,false),
+            listOf(HttpMethod.GET,"/admin/traveler/1/tickets","",adminRole,false),
             listOf(HttpMethod.GET,"/admin/traveler/1/profile","",customerRole,true),
             listOf(HttpMethod.GET,"/admin/traveler/1/tickets","",customerRole,true),
             listOf(
