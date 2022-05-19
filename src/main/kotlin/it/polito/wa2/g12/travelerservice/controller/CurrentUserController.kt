@@ -1,5 +1,6 @@
 package it.polito.wa2.g12.travelerservice.controller
 
+import arrow.core.invalid
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
@@ -18,13 +19,15 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
     @GetMapping(value = ["/profile"])
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun getUserDet(principal: Principal) : ResponseEntity<Any> {
-        val res : UserInfoDTO = travelerService.getUserDet(principal.name)
-        return ResponseEntity(res, HttpStatus.OK)
+        val res : UserInfoDTO? = travelerService.getUserDet(principal.name)
+        return if (res == null) ResponseEntity("UserDetails not available for ${principal.name}", HttpStatus.NOT_FOUND)
+        else ResponseEntity(res, HttpStatus.OK)
     }
 
     // To test this endpoint you can provide a JSON like this one:
     // {"name":"test", "address":"test", "date_of_birth":"2022-05-18", "number":123456789}
     // All the JSON fields are needed
+
     @PutMapping("/profile")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun updateUserDet(
@@ -37,15 +40,20 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         val ob = jacksonObjectMapper()
         val newInfo: UserInfoDTO = ob.readValue(body, UserInfoDTO::class.java)
-        travelerService.updateUserDet(principal.name, newInfo)
-        return ResponseEntity("User updated!", HttpStatus.OK)
+        return when (travelerService.updateUserDet(principal.name, newInfo)) {
+            2 -> ResponseEntity("Cannot update the user name field. " +
+                    "There is another user named \"${newInfo.name}\".", HttpStatus.BAD_REQUEST)
+            1 -> ResponseEntity("User details updated!", HttpStatus.OK)
+            else -> ResponseEntity("User details created", HttpStatus.CREATED)
+        }
     }
 
     @GetMapping("/tickets")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
-    fun getTickets(principal: Principal) : ResponseEntity<List<TicketDTO>> {
-        val res : List<TicketDTO> = travelerService.getUserTickets(principal.name)
-        return ResponseEntity(res, HttpStatus.OK)
+    fun getTickets(principal: Principal) : ResponseEntity<Any> {
+        val res : List<TicketDTO>? = travelerService.getUserTickets(principal.name)
+        return if (res == null) ResponseEntity("UserDetails not available for ${principal.name}", HttpStatus.NOT_FOUND)
+        else ResponseEntity(res, HttpStatus.OK)
     }
 
     private data class AddingTicketReq(val cmd: String, val quantity: Int, val zones: String)
@@ -60,12 +68,13 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
         body: String,
         br: BindingResult,
         principal: Principal
-    ) : ResponseEntity<List<TicketDTO>> {
+    ) : ResponseEntity<Any> {
         val ob = jacksonObjectMapper()
         val req = ob.readValue(body, AddingTicketReq::class.java)
         if (req.cmd != "buy_tickets"|| br.hasErrors())
             return ResponseEntity(HttpStatus.BAD_REQUEST)
-        val res = travelerService.createUserTickets(principal.name, req.quantity, req.zones)
-        return ResponseEntity(res, HttpStatus.CREATED)
+        val res: List<TicketDTO>? = travelerService.createUserTickets(principal.name, req.quantity, req.zones)
+        return if (res == null) ResponseEntity("UserDetails not available for ${principal.name}", HttpStatus.NOT_FOUND)
+        else ResponseEntity(res, HttpStatus.OK)
     }
 }
