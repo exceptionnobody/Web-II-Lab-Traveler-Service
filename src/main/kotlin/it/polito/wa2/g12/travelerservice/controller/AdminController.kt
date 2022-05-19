@@ -17,7 +17,7 @@ class AdminController(val travelerService: TravelerServiceImpl) {
         return ResponseEntity(res, HttpStatus.OK)
     }
 
-    @GetMapping("/{userID}/profile")
+    @GetMapping("traveler/{userID}/profile")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     fun getTravelerById(
         @PathVariable userID: Long
@@ -27,7 +27,7 @@ class AdminController(val travelerService: TravelerServiceImpl) {
         else ResponseEntity(res, HttpStatus.OK)
     }
 
-    @GetMapping("/{userID}/tickets")
+    @GetMapping("traveler/{userID}/tickets")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     fun getTravelerTicketsByUserId(
         @PathVariable userID: Long
