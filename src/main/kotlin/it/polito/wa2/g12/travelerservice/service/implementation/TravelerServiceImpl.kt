@@ -1,5 +1,6 @@
 package it.polito.wa2.g12.travelerservice.service.implementation
 
+import io.jsonwebtoken.Jwts
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import it.polito.wa2.g12.travelerservice.entities.TicketPurchased
@@ -9,8 +10,14 @@ import it.polito.wa2.g12.travelerservice.repositories.TicketPurchasedRepository
 import it.polito.wa2.g12.travelerservice.repositories.UserDetailsRepository
 import it.polito.wa2.g12.travelerservice.service.TravelerService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.Optional
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.util.*
+import javax.crypto.SecretKey
 
 @Service
 class TravelerServiceImpl : TravelerService {
@@ -20,6 +27,9 @@ class TravelerServiceImpl : TravelerService {
 
     @Autowired
     lateinit var ticketsRepo : TicketPurchasedRepository
+
+   @Autowired
+   lateinit var secretKey: SecretKey
 
     override fun getUserDet(name: String) : UserInfoDTO? {
         return if (userDetRepo.findByName(name).isEmpty) null
@@ -50,10 +60,16 @@ class TravelerServiceImpl : TravelerService {
     }
 
     private fun getTicketList(tickets: List<String>): MutableList<TicketDTO> {
+
         val ticketList: MutableList<TicketDTO> = mutableListOf()
         tickets.forEach { t ->
             val parts = t.split(",")
-            ticketList.add(TicketDTO(parts[0].toLong(), parts[3], parts[1], parts[2], parts[4].toLong()))
+            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+            val exp = formatter.parse(parts[2]).time
+            val iat = formatter.parse(parts[1]).time
+            val claims = mapOf<String,Any>("sub" to parts[0].toLong(), "exp" to exp,"vz" to parts[3], "iat" to iat)
+            val jws= Jwts.builder().setClaims(claims).signWith(secretKey).compact()
+            ticketList.add(TicketDTO(parts[0].toLong(), parts[3], parts[1], parts[2],jws))
         }
         return ticketList
     }
@@ -80,9 +96,13 @@ class TravelerServiceImpl : TravelerService {
             var x = quantity
             val newTickets: MutableList<TicketDTO> = mutableListOf()
             while (x > 0) {
-                val newTicket = TicketPurchased(zone, user)
-                ticketsRepo.save(newTicket)
-                newTickets.add(newTicket.toDTO(newTicket.getId(), newTicket.userDet.getId()))
+                var newTicket = TicketPurchased(zone, user)
+                newTicket=ticketsRepo.save(newTicket)
+                val exp = newTicket.deadline.time
+                val iat = newTicket.issuedAt.time
+                val claims = mapOf<String,Any>("sub" to newTicket.getId()!!, "exp" to exp,"vz" to newTicket.zone, "iat" to iat)
+                val jws= Jwts.builder().setClaims(claims).signWith(secretKey).compact()
+                newTickets.add(newTicket.toDTO(newTicket.getId(),jws))
                 x--
             }
             newTickets

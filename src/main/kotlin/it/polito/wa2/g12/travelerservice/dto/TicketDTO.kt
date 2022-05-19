@@ -1,3 +1,3 @@
 package it.polito.wa2.g12.travelerservice.dto
 
-data class TicketDTO (var id: Long?, var zone: String, var issued_At: String, var deadline: String, var usedId: Long?)
+data class TicketDTO (var sub: Long?, var zid: String, var iat: String, var exp: String,var jws: String)

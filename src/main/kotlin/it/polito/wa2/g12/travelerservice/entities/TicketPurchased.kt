@@ -20,4 +20,4 @@ class TicketPurchased(
     var deadline: Date = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1))
 }
 
-fun TicketPurchased.toDTO(ticketId: Long?, userId: Long?) = TicketDTO(ticketId, zone, issuedAt.toString(), deadline.toString(), userId)
+fun TicketPurchased.toDTO(ticketId: Long?,jws:String) = TicketDTO(ticketId, zone, issuedAt.toString(), deadline.toString(),jws)
