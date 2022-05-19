@@ -14,7 +14,7 @@ class UserDetails(
     @Temporal(value = TemporalType.DATE)
     var date_of_birth: Date = java.sql.Date.valueOf(""),
     @Column (nullable = false, unique = true)
-    var phoneNumber : Int,
+    var phoneNumber : String,
     // Ticket list
     @OneToMany(mappedBy = "userDet")
     val tickets: MutableList<TicketPurchased> = mutableListOf<TicketPurchased>()
