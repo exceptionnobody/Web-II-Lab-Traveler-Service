@@ -26,8 +26,10 @@ class TravelerServiceImpl : TravelerService {
         else userDetRepo.findByName(name).get().toDTO()
     }
 
-    override fun getUserDetById(userId: Long): UserInfoDTO {
-        return userDetRepo.findById(userId).get().toDTO()
+    override fun getUserDetById(userId: Long): UserInfoDTO? {
+        val user = userDetRepo.findById(userId)
+        return if (user.isEmpty) null
+        else user.get().toDTO()
     }
 
     //returns "0" if the record is created
@@ -67,9 +69,12 @@ class TravelerServiceImpl : TravelerService {
         }
     }
 
-    override fun getTicketsByUserId(userId: Long): List<TicketDTO> {
-        val tickets: List<String> = ticketsRepo.findAllByUserDet(userId)
-        return getTicketList(tickets)
+    override fun getTicketsByUserId(userId: Long): List<TicketDTO>? {
+        return if (userDetRepo.findById(userId) == null) null
+        else {
+            val tickets: List<String> = ticketsRepo.findAllByUserDet(userId)
+            getTicketList(tickets)
+        }
     }
 
     override fun createUserTickets(name: String, quantity: Int, zone: String): List<TicketDTO>? {

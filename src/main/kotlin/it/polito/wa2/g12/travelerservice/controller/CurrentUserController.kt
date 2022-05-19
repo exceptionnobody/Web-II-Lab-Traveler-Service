@@ -19,7 +19,7 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun getUserDet(principal: Principal) : ResponseEntity<Any> {
         val res : UserInfoDTO? = travelerService.getUserDet(principal.name)
-        return if (res == null) ResponseEntity("UserDetails not available for ${principal.name}", HttpStatus.NOT_FOUND)
+        return if (res == null) ResponseEntity("User details not available for ${principal.name}", HttpStatus.NOT_FOUND)
         else ResponseEntity(res, HttpStatus.OK)
     }
 

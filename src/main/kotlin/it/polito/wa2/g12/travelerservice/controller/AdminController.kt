@@ -23,7 +23,8 @@ class AdminController(val travelerService: TravelerServiceImpl) {
         @PathVariable userID: Long
     ) : ResponseEntity<Any> {
         val res = travelerService.getUserDetById(userID)
-        return ResponseEntity(res, HttpStatus.OK)
+        return if (res == null) ResponseEntity("User details not available for specified id: $userID", HttpStatus.OK)
+        else ResponseEntity(res, HttpStatus.OK)
     }
 
     @GetMapping("/{userID}/tickets")
@@ -32,8 +33,8 @@ class AdminController(val travelerService: TravelerServiceImpl) {
         @PathVariable userID: Long
     ) : ResponseEntity<Any> {
         val res = travelerService.getTicketsByUserId(userID)
-        return if (res.isEmpty())
-            ResponseEntity("No tickets found for the specified user", HttpStatus.NOT_FOUND)
+        return if (res == null) ResponseEntity("User details not available for specified id: $userID", HttpStatus.BAD_REQUEST)
+        else if (res!!.isEmpty()) ResponseEntity("No tickets found for the specified user", HttpStatus.NOT_FOUND)
         else ResponseEntity(res, HttpStatus.OK)
     }
 }
