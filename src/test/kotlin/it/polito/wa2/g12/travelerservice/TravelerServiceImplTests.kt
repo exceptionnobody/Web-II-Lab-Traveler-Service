@@ -1,18 +1,23 @@
 package it.polito.wa2.g12.travelerservice
 
+import io.jsonwebtoken.io.Decoders
+import io.jsonwebtoken.security.Keys
 import it.polito.wa2.g12.travelerservice.entities.UserDetails
 import it.polito.wa2.g12.travelerservice.repositories.TicketPurchasedRepository
 import it.polito.wa2.g12.travelerservice.repositories.UserDetailsRepository
 import it.polito.wa2.g12.travelerservice.service.implementation.TravelerServiceImpl
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.runner.RunWith
 import org.mockito.*
 import org.mockito.Mockito.times
-import org.springframework.boot.test.context.SpringBootTest
+import org.mockito.junit.MockitoJUnitRunner
+import org.springframework.test.util.ReflectionTestUtils
 import java.util.*
 
-@SpringBootTest
+@RunWith(MockitoJUnitRunner::class)
 class TravelerServiceImplTests {
 
     @InjectMocks
@@ -21,6 +26,17 @@ class TravelerServiceImplTests {
     lateinit var ticketsRepo: TicketPurchasedRepository
     @Mock
     lateinit var userDetRepo: UserDetailsRepository
+
+    @BeforeEach
+    fun setUp() {
+        val testKey = "TestKeyTestKeyTestKeyTestKeyTestKeyTestKeyTestKey"
+        MockitoAnnotations.initMocks(this)
+        ReflectionTestUtils.setField(
+            travelerServiceImpl,
+            "secretKey",
+            Keys.hmacShaKeyFor(Decoders.BASE64.decode(testKey))
+        )
+    }
 
     @Test
     fun getUserDetTest() {
@@ -69,7 +85,7 @@ class TravelerServiceImplTests {
         }
     }
 
-    /*
+
     @Test
     fun getUserTicketsTest() {
         val userDetails = UserDetails("test","test", Date(0),"0123456789")
@@ -77,7 +93,6 @@ class TravelerServiceImplTests {
             Optional.of(userDetails)
         )
         userDetails.setId(1L)
-        //ReflectionTestUtils.setField(secretKey, "ticketKey", "N3cheiVDJkYpSkBOY1JmVWpYbjJyNXU4eC9BP0QoRy0=");
         Mockito.`when`(ticketsRepo.findAllByUserDet(1L)).thenReturn(
             listOf("1,2022-05-20 03:55:21.000000,2022-05-20 03:55:21.000000,A")
         )
@@ -86,13 +101,4 @@ class TravelerServiceImplTests {
         Mockito.clearInvocations(ticketsRepo)
         assertNotNull(ticketList)
     }
-    @SpyBean
-    lateinit var secretKey: SecretKey
-    @Before
-    fun setUp() {
-        //MockitoAnnotations.initMocks()
-        //secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode("N3cheiVDJkYpSkBOY1JmVWpYbjJyNXU4eC9BP0QoRy0="))
-        //ReflectionTestUtils.setField(travelerServiceImpl, "secretKey", Keys.hmacShaKeyFor(Decoders.BASE64.decode("N3cheiVDJkYpSkBOY1JmVWpYbjJyNXU4eC9BP0QoRy0=")))
-    }
-    */
 }
