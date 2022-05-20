@@ -2,6 +2,7 @@ package it.polito.wa2.g12.travelerservice.entities
 
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.Date
 import javax.persistence.*
 
@@ -14,10 +15,10 @@ class TicketPurchased(
 ): EntityBase<Long>() {
     @Column (nullable = false)
     @Temporal(value = TemporalType.TIMESTAMP)
-    var issuedAt: Date = java.sql.Timestamp.valueOf(LocalDateTime.now())
+    var issuedAt: Date = java.sql.Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
     @Column(nullable = false)
     @Temporal(value = TemporalType.TIMESTAMP)
-    var deadline: Date = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1))
+    var deadline: Date = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(1).truncatedTo(ChronoUnit.SECONDS))
 }
 
 fun TicketPurchased.toDTO(ticketId: Long?,jws:String) = TicketDTO(ticketId, zone, issuedAt.toString(), deadline.toString(),jws)

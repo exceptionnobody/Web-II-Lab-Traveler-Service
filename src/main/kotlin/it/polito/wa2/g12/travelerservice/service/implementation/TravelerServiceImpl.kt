@@ -38,15 +38,15 @@ class TravelerServiceImpl : TravelerService {
 
     //returns "0" if the record is created
     //returns "1" if the record is updated
-    //returns "2" if the new name is already stored in the db
+    //returns "2" otherwise
     override fun updateUserDet(name: String, info: UserInfoDTO): Int {
         val userInfo: Optional<UserDetails> = userDetRepo.findByName(name)
-        val userDet: Optional<UserDetails> = userDetRepo.findByName(info.name)
+        val userDet: Optional<UserDetails> = userDetRepo.findByName(name)
         return if (userInfo.isEmpty) {
-            userDetRepo.save(UserDetails(info.name, info.address, info.date_of_birth, info.number))
+            userDetRepo.save(UserDetails(info.name, name, info.address, info.date_of_birth, info.number))
             0
         } else if (!userDet.isEmpty && userInfo.get().getId() == userDet.get().getId()){
-            userInfo.get().name = info.name
+            userInfo.get().username = info.name
             userInfo.get().address = info.address
             userInfo.get().date_of_birth = info.date_of_birth
             userInfo.get().phoneNumber = info.number
@@ -79,7 +79,7 @@ class TravelerServiceImpl : TravelerService {
     }
 
     override fun getTicketsByUserId(userId: Long): List<TicketDTO>? {
-        return if (userDetRepo.findById(userId) == null) null
+        return if (userDetRepo.findById(userId).isEmpty) null
         else {
             val tickets: List<String> = ticketsRepo.findAllByUserDet(userId)
             getTicketList(tickets)
@@ -88,7 +88,7 @@ class TravelerServiceImpl : TravelerService {
 
     override fun createUserTickets(name: String, quantity: Int, zone: String): List<TicketDTO>? {
         val userInfo: Optional<UserDetails> = userDetRepo.findByName(name)
-        return if (userInfo == null) null
+        return if (userInfo.isEmpty) null
         else {
             val user: UserDetails = userInfo.get()
             var x = quantity

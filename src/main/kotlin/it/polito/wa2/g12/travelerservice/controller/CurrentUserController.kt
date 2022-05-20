@@ -39,8 +39,7 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
         val ob = jacksonObjectMapper()
         val newInfo: UserInfoDTO = ob.readValue(body, UserInfoDTO::class.java)
         return when (travelerService.updateUserDet(principal.name, newInfo)) {
-            2 -> ResponseEntity("Cannot update the user name field. " +
-                    "There is another user named \"${newInfo.name}\".", HttpStatus.BAD_REQUEST)
+            2 -> ResponseEntity("Cannot update the user name field", HttpStatus.BAD_REQUEST)
             1 -> ResponseEntity("User details updated!", HttpStatus.OK)
             else -> ResponseEntity("User details created", HttpStatus.CREATED)
         }

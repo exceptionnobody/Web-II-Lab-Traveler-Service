@@ -6,6 +6,8 @@ import javax.persistence.*
 
 @Entity
 class UserDetails(
+    @Column (nullable = false)
+    var username: String,
     @Column (nullable = false, unique = true)
     var name: String,
     @Column (nullable = false)
@@ -25,4 +27,4 @@ class UserDetails(
     }
 }
 
-fun UserDetails.toDTO() = UserInfoDTO(name, address, date_of_birth, phoneNumber)
+fun UserDetails.toDTO() = UserInfoDTO(username, address, date_of_birth, phoneNumber)
