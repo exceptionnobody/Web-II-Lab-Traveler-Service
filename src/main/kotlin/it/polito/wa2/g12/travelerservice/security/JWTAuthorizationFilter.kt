@@ -37,7 +37,7 @@ class JWTAuthorizationFilter(
             val authorities = ArrayList<GrantedAuthority>()
             val a = header.let { validationJwt.getDetailsJwt(it) }
             for (i in a.roles) {
-                authorities.add(SimpleGrantedAuthority(i))
+                authorities.add(SimpleGrantedAuthority(i.trim()))
             }
             SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(a.username, null, authorities)
         }

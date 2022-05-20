@@ -28,7 +28,7 @@ class JWTUtils(private val securityProperties: SecurityProperties) {
         val userDetails = decodedJwt.body["roles"].toString().replace("[", "").replace("]", "")
 
         for (i in userDetails.split(",")) {
-            authorities.add(SimpleGrantedAuthority(i))
+            authorities.add(SimpleGrantedAuthority(i.trim()))
         }
 
         return UserDetailsDTO(decodedJwt.body.subject, userDetails.split(","))
