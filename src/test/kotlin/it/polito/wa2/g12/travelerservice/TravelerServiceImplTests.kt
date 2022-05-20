@@ -2,6 +2,8 @@ package it.polito.wa2.g12.travelerservice
 
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
+import it.polito.wa2.g12.travelerservice.entities.TicketPurchased
 import it.polito.wa2.g12.travelerservice.entities.UserDetails
 import it.polito.wa2.g12.travelerservice.repositories.TicketPurchasedRepository
 import it.polito.wa2.g12.travelerservice.repositories.UserDetailsRepository
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.mockito.*
+import org.mockito.Mockito.any
 import org.mockito.Mockito.times
 import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.test.util.ReflectionTestUtils
@@ -75,16 +78,23 @@ class TravelerServiceImplTests {
     }
 
     @Test
-    fun getTravelersTest() {
-        Mockito.`when`(userDetRepo.findAllTravelers()).thenReturn(
-            listOf("test1","test2","test3")
-        )
-        val travelers = travelerServiceImpl.getTravelers()
-        for (i in 0..2) {
-            assert(travelers[i] == "test"+(i+1))
-        }
-    }
+    fun updateUserDetTest() {
+        val userInfoDto = UserInfoDTO("testA","test",Date(0),"0123456789")
+        val userDetails = UserDetails("testA","test",Date(0),"0123456789")
 
+        Mockito.`when`(userDetRepo.findByName("testB")).thenReturn(Optional.empty())
+        val res1 = travelerServiceImpl.updateUserDet("testB", userInfoDto)
+        assert(res1 == 0)
+
+        Mockito.`when`(userDetRepo.findByName("testA")).thenReturn(Optional.of(userDetails))
+        Mockito.`when`(userDetRepo.findByName("testB")).thenReturn(Optional.of(userDetails))
+        val res2 = travelerServiceImpl.updateUserDet("testB", userInfoDto)
+        assert(res2 == 1)
+
+        Mockito.`when`(userDetRepo.findByName("testA")).thenReturn(Optional.empty())
+        val res3 = travelerServiceImpl.updateUserDet("testB", userInfoDto)
+        assert(res3 == 2)
+    }
 
     @Test
     fun getUserTicketsTest() {
@@ -100,5 +110,46 @@ class TravelerServiceImplTests {
         Mockito.clearInvocations(userDetRepo)
         Mockito.clearInvocations(ticketsRepo)
         assertNotNull(ticketList)
+    }
+
+
+    @Test
+    fun getTicketsByUserIdTest() {
+        Mockito.`when`(userDetRepo.findById(1L)).thenReturn(
+            null
+        )
+        val ticketList = travelerServiceImpl.getTicketsByUserId(1L)
+        Mockito.clearInvocations(userDetRepo)
+        Mockito.clearInvocations(ticketsRepo)
+        assertNull(ticketList)
+    }
+
+    @Test
+    fun createUserTicketsTest() {
+        val userDetails = UserDetails("test","test", Date(0),"0123456789")
+        Mockito.`when`(userDetRepo.findByName("test")).thenReturn(
+            Optional.of(userDetails)
+        )
+        val ticketPurchased = TicketPurchased("A", userDetails)
+        ticketPurchased.setId(1L)
+        Mockito.`when`(ticketsRepo.save(any())).thenReturn(
+            ticketPurchased
+        )
+        val newTickets = travelerServiceImpl.createUserTickets("test",2,"A")
+        Mockito.clearInvocations(userDetRepo)
+        Mockito.clearInvocations(ticketsRepo)
+        assertNotNull(newTickets)
+    }
+
+    @Test
+    fun getTravelersTest() {
+        Mockito.`when`(userDetRepo.findAllTravelers()).thenReturn(
+            listOf("test1","test2","test3")
+        )
+        val travelers = travelerServiceImpl.getTravelers()
+        for (i in 0..2) {
+            assert(travelers[i] == "test"+(i+1))
+        }
+        Mockito.clearInvocations(userDetRepo)
     }
 }
