@@ -10,12 +10,8 @@ import it.polito.wa2.g12.travelerservice.repositories.TicketPurchasedRepository
 import it.polito.wa2.g12.travelerservice.repositories.UserDetailsRepository
 import it.polito.wa2.g12.travelerservice.service.TravelerService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.util.*
 import javax.crypto.SecretKey
 
@@ -24,12 +20,10 @@ class TravelerServiceImpl : TravelerService {
 
     @Autowired
     lateinit var userDetRepo : UserDetailsRepository
-
     @Autowired
     lateinit var ticketsRepo : TicketPurchasedRepository
-
-   @Autowired
-   lateinit var secretKey: SecretKey
+    @Autowired
+    lateinit var secretKey: SecretKey
 
     override fun getUserDet(name: String) : UserInfoDTO? {
         return if (userDetRepo.findByName(name).isEmpty) null
@@ -62,7 +56,6 @@ class TravelerServiceImpl : TravelerService {
     }
 
     private fun getTicketList(tickets: List<String>): MutableList<TicketDTO> {
-
         val ticketList: MutableList<TicketDTO> = mutableListOf()
         tickets.forEach { t ->
             val parts = t.split(",")
