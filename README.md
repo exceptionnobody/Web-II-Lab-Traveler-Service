@@ -11,6 +11,14 @@ Repository for the Lab 4 assignment of the Web Applications II course at Polytec
 
 ## Usage
 
+The Login service can be found in the repository ```wa2-g12-user-registration``` on the branch ```lab-4```:
+- ```cd wa2-g12-user-registration```
+- ```git checkout lab-4```
+
+When the container is started the SQL initialization script in the init folder is executed to create the two databases:
+- ```login_db``` 
+- ```traveler_db```
+
 To start the project:
 
 1. Move inside the project root: ```cd wa1-g12-traveler-service```
