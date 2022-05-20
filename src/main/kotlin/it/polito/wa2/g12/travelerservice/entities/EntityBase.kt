@@ -34,4 +34,8 @@ abstract class EntityBase<T: java.io.Serializable>{
     override fun hashCode(): Int {
         return 31
     }
+
+    fun setId(newId: T) {
+        id = newId
+    }
 }
