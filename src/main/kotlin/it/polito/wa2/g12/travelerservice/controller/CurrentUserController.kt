@@ -77,6 +77,7 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
         else ResponseEntity(res, HttpStatus.OK)
     }
 
+    // This endpoint is the one called by the catalogue service to generate tickets
     @PostMapping("/tickets/acquired")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun aquireTickets(

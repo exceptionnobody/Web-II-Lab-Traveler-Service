@@ -118,18 +118,19 @@ class TravelerServiceImpl : TravelerService {
         return userDetRepo.findAllTravelers()
     }
 
+    // Generates the tickets requested from the catalogue service
     override fun acquireTickets(ticketsToAcquire: TicketsToAcquireDTO): List<AcquiredTicketDTO>? {
         // Gets user from the db
         val user = userDetRepo.findByName(ticketsToAcquire.username)
         if (user.isEmpty)
             return null
 
-        var acquiredTickets = mutableListOf<AcquiredTicketDTO>()
+        val acquiredTickets = mutableListOf<AcquiredTicketDTO>()
 
         for (i in 1..ticketsToAcquire.quantity) {
 
             // Creates the ticket
-            var t = TicketPurchased(ticketsToAcquire.zones, user.get())
+            val t = TicketPurchased(ticketsToAcquire.zones, user.get())
             t.type = ticketsToAcquire.type
             t.issuedAt = java.sql.Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
 
