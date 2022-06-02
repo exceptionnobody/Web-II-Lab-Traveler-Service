@@ -1,6 +1,8 @@
 package it.polito.wa2.g12.travelerservice.controller
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import it.polito.wa2.g12.travelerservice.dto.AcquiredTicketDTO
+import it.polito.wa2.g12.travelerservice.dto.TicketsToAcquireDTO
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import org.springframework.http.HttpStatus
@@ -73,5 +75,16 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
         val res: List<TicketDTO>? = travelerService.createUserTickets(principal.name, req.quantity, req.zones)
         return if (res == null) ResponseEntity("UserDetails not available for ${principal.name}", HttpStatus.NOT_FOUND)
         else ResponseEntity(res, HttpStatus.OK)
+    }
+
+    @PostMapping("/tickets/acquired")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
+    fun aquireTickets(
+        @RequestBody acquiredTickets: TicketsToAcquireDTO,
+        principal: Principal
+    ) : ResponseEntity<List<AcquiredTicketDTO>> {
+        val tickets = travelerService.acquireTickets(acquiredTickets) ?:
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        return ResponseEntity(tickets, HttpStatus.OK)
     }
 }

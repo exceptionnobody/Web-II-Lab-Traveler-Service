@@ -1,18 +1,25 @@
 package it.polito.wa2.g12.travelerservice.service.implementation
 
 import io.jsonwebtoken.Jwts
+import it.polito.wa2.g12.travelerservice.dto.AcquiredTicketDTO
+import it.polito.wa2.g12.travelerservice.dto.TicketsToAcquireDTO
 import it.polito.wa2.g12.travelerservice.dto.TicketDTO
 import it.polito.wa2.g12.travelerservice.dto.UserInfoDTO
 import it.polito.wa2.g12.travelerservice.entities.TicketPurchased
 import it.polito.wa2.g12.travelerservice.entities.UserDetails
 import it.polito.wa2.g12.travelerservice.entities.toDTO
+import it.polito.wa2.g12.travelerservice.entities.toExtendedDTO
 import it.polito.wa2.g12.travelerservice.repositories.TicketPurchasedRepository
 import it.polito.wa2.g12.travelerservice.repositories.UserDetailsRepository
 import it.polito.wa2.g12.travelerservice.service.TravelerService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
+import javax.annotation.PostConstruct
 import javax.crypto.SecretKey
 
 @Service
@@ -109,5 +116,63 @@ class TravelerServiceImpl : TravelerService {
 
     override fun getTravelers(): List<String> {
         return userDetRepo.findAllTravelers()
+    }
+
+    override fun acquireTickets(ticketsToAcquire: TicketsToAcquireDTO): List<AcquiredTicketDTO>? {
+        // Gets user from the db
+        val user = userDetRepo.findByName(ticketsToAcquire.username)
+        if (user.isEmpty)
+            return null
+
+        var acquiredTickets = mutableListOf<AcquiredTicketDTO>()
+
+        for (i in 1..ticketsToAcquire.quantity) {
+
+            // Creates the ticket
+            var t = TicketPurchased(ticketsToAcquire.zones, user.get())
+            t.type = ticketsToAcquire.type
+            t.issuedAt = java.sql.Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+
+            if (ticketsToAcquire.only_weekends) {
+                val saturday = LocalDateTime.now().with(DayOfWeek.SATURDAY).truncatedTo(ChronoUnit.SECONDS)
+                t.validFrom = java.sql.Timestamp.valueOf(saturday)
+                t.deadline = java.sql.Timestamp.valueOf(saturday.plusHours(ticketsToAcquire.duration.toLong()))
+            } else {
+                val monday = LocalDateTime.now().with(DayOfWeek.MONDAY).truncatedTo(ChronoUnit.SECONDS)
+                t.validFrom = java.sql.Timestamp.valueOf(monday)
+                t.deadline = java.sql.Timestamp.valueOf(monday.plusHours(ticketsToAcquire.duration.toLong()))
+            }
+
+            // Saves the tickets
+            val newTicket = ticketsRepo.save(t)
+
+            // Generates JWS
+            val claims = mapOf<String,Any>(
+                "sub" to newTicket.getId()!!,
+                "iat" to newTicket.issuedAt.time,
+                "validfrom" to newTicket.validFrom!!.time,
+                "exp" to newTicket.deadline.time,
+                "zid" to newTicket.zone,
+                "type" to newTicket.type!!,
+            )
+            val jws= Jwts.builder().setClaims(claims).signWith(secretKey).compact()
+            acquiredTickets.add(newTicket.toExtendedDTO(newTicket.getId(), jws))
+        }
+
+        return acquiredTickets
+    }
+
+    // Creates a default record in the db
+    @PostConstruct
+    private fun createAdmin() {
+        if (userDetRepo.findByName("admin").isEmpty) {
+            userDetRepo.save(UserDetails(
+                "admin",
+                "admin",
+                "address",
+                Date(0),
+                "0123456789",
+            ))
+        }
     }
 }
