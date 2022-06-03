@@ -62,21 +62,30 @@ class TravelerServiceImpl : TravelerService {
         } else 2
     }
 
-    private fun getTicketList(tickets: List<String>): MutableList<TicketDTO> {
-        val ticketList: MutableList<TicketDTO> = mutableListOf()
+    private fun getTicketList(tickets: List<String>): MutableList<AcquiredTicketDTO> {
+        val ticketList: MutableList<AcquiredTicketDTO> = mutableListOf()
         tickets.forEach { t ->
             val parts = t.split(",")
             val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
             val exp = formatter.parse(parts[2]).time
             val iat = formatter.parse(parts[1]).time
-            val claims = mapOf<String,Any>("sub" to parts[0].toLong(), "exp" to exp,"vz" to parts[3], "iat" to iat)
+            val validfrom = formatter.parse(parts[5]).time
+
+            val claims = mapOf<String,Any>(
+                "sub" to parts[0].toLong(),
+                "iat" to iat,
+                "validfrom" to validfrom,
+                "exp" to exp,
+                "zid" to parts[3],
+                "type" to parts[6],
+            )
             val jws= Jwts.builder().setClaims(claims).signWith(secretKey).compact()
-            ticketList.add(TicketDTO(parts[0].toLong(), parts[3], parts[1], parts[2],jws))
+            ticketList.add(AcquiredTicketDTO(parts[0].toLong(), parts[1], parts[5], parts[2], parts[3], parts[6], jws))
         }
         return ticketList
     }
 
-    override fun getUserTickets(name: String): List<TicketDTO>? {
+    override fun getUserTickets(name: String): List<AcquiredTicketDTO>? {
         val userInfo: Optional<UserDetails> = userDetRepo.findByName(name)
         return if (userInfo.isEmpty) null
         else {
@@ -85,7 +94,7 @@ class TravelerServiceImpl : TravelerService {
         }
     }
 
-    override fun getTicketsByUserId(userId: Long): List<TicketDTO>? {
+    override fun getTicketsByUserId(userId: Long): List<AcquiredTicketDTO>? {
         return if (userDetRepo.findById(userId).isEmpty) null
         else {
             val tickets: List<String> = ticketsRepo.findAllByUserDet(userId)
@@ -139,9 +148,9 @@ class TravelerServiceImpl : TravelerService {
                 t.validFrom = java.sql.Timestamp.valueOf(saturday)
                 t.deadline = java.sql.Timestamp.valueOf(saturday.plusHours(ticketsToAcquire.duration.toLong()))
             } else {
-                //val monday = LocalDateTime.now().with(DayOfWeek.MONDAY).truncatedTo(ChronoUnit.SECONDS)
-                t.validFrom = java.sql.Timestamp.valueOf(LocalDateTime.now())
-                t.deadline = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(ticketsToAcquire.duration.toLong()))
+                val now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
+                t.validFrom = java.sql.Timestamp.valueOf(now)
+                t.deadline = java.sql.Timestamp.valueOf(now.plusHours(ticketsToAcquire.duration.toLong()))
             }
 
             // Saves the tickets

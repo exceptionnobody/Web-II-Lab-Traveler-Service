@@ -50,7 +50,7 @@ class CurrentUserController(val travelerService: TravelerServiceImpl) {
     @GetMapping("/tickets")
     @PreAuthorize("hasAnyAuthority('ADMIN','CUSTOMER')")
     fun getTickets(principal: Principal) : ResponseEntity<Any> {
-        val res : List<TicketDTO>? = travelerService.getUserTickets(principal.name)
+        val res : List<AcquiredTicketDTO>? = travelerService.getUserTickets(principal.name)
         return if (res == null) ResponseEntity("UserDetails not available for ${principal.name}", HttpStatus.NOT_FOUND)
         else ResponseEntity(res, HttpStatus.OK)
     }

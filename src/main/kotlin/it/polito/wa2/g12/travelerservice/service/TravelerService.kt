@@ -8,8 +8,8 @@ interface TravelerService {
     fun getUserDet(name: String): UserInfoDTO?
     fun getUserDetById(userId: Long): UserInfoDTO?
     fun updateUserDet(name: String, info: UserInfoDTO): Int
-    fun getUserTickets(name: String): List<TicketDTO>?
-    fun getTicketsByUserId(userId: Long): List<TicketDTO>?
+    fun getUserTickets(name: String): List<AcquiredTicketDTO>?
+    fun getTicketsByUserId(userId: Long): List<AcquiredTicketDTO>?
     fun createUserTickets(name: String, quantity: Int, zone: String): List<TicketDTO>?
     fun getTravelers(): List<String>
     fun acquireTickets(ticketsToAcquire: TicketsToAcquireDTO): List<AcquiredTicketDTO>?
