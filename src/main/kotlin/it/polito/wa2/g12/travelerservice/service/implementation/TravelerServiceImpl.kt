@@ -139,9 +139,9 @@ class TravelerServiceImpl : TravelerService {
                 t.validFrom = java.sql.Timestamp.valueOf(saturday)
                 t.deadline = java.sql.Timestamp.valueOf(saturday.plusHours(ticketsToAcquire.duration.toLong()))
             } else {
-                val monday = LocalDateTime.now().with(DayOfWeek.MONDAY).truncatedTo(ChronoUnit.SECONDS)
-                t.validFrom = java.sql.Timestamp.valueOf(monday)
-                t.deadline = java.sql.Timestamp.valueOf(monday.plusHours(ticketsToAcquire.duration.toLong()))
+                //val monday = LocalDateTime.now().with(DayOfWeek.MONDAY).truncatedTo(ChronoUnit.SECONDS)
+                t.validFrom = java.sql.Timestamp.valueOf(LocalDateTime.now())
+                t.deadline = java.sql.Timestamp.valueOf(LocalDateTime.now().plusHours(ticketsToAcquire.duration.toLong()))
             }
 
             // Saves the tickets
