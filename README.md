@@ -34,7 +34,7 @@ NOTE: After the last step the Docker container created should contain all the 4 
 
 To remove the project:
 
-1. Stop the container: ```docker stop my-postgres-container```
-2. Remove the container: ```docker rm my-postgres-container```
+1. Stop the container: ```docker stop wa2-g12-postgres-db```
+2. Remove the container: ```docker rm wa2-g12-postgres-db```
 3. Remove the volume: ```docker volume rm my-postgres-volume```
 4. Remove the image: ```docker image rm my-postgres-image```
